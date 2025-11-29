@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  redis:
+    image: "redis:alpine"
+    container_name: "redis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  auth-api:
+    build: ../auth-api
+    container_name: auth_api
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+
+  todos-api:
+    build: ../todos-api
+    container_name: todos_api
+    ports:
+      - "8082:8082"
+    depends_on:
+      - redis
+      - auth-api
+
+  users-api:
+    build: ../users-api
+    container_name: users_api
+    ports:
+      - "8083:8083"
+    depends_on:
+      - redis
+      - auth-api
+
+  frontend:
+    build: ../frontend
+    container_name: frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - todos-api
+      - users-api
+      - auth-api
+
+  log-message-processor:
+    build: ../log-message-processor
+    container_name: log_message_processor
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
