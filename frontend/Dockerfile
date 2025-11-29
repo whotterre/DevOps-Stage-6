@@ -1,6 +1,6 @@
 FROM node:22-alpine
 
-WORKDIR /home/app/todo_app
+WORKDIR /home/app/frontend
 
 COPY . .
 
